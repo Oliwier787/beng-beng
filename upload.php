@@ -4,7 +4,7 @@ if(!empty($_POST)) {
     $postTitle = $_POST['postTitle'];
     $postDescription = $_POST['postDescription'];
     //wgrywanie pliku
-    //zdefiniuj folder docelowy
+    //zdefiniuj folder docelowe
     $targetDirectory = "img/";
     //użyj oryginalnej nazwy pliku
     $fileName = $_FILES['file']['name'];
