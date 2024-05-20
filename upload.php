@@ -1,19 +1,10 @@
 <?php
-if(!empty($_POST)) {
+require_once('class/Post.class.php');
+require_once('class/User.class.php');
+session_start();
+if(!empty($_POST) && isset($_SESSION['user'])) {
     //coś przyszło postem
-    $postTitle = $_POST['postTitle'];
-    $postDescription = $_POST['postDescription'];
-    //wgrywanie pliku
-    //zdefiniuj folder docelowe
-    $targetDirectory = "img/";
-    //użyj oryginalnej nazwy pliku
-    $fileName = $_FILES['file']['name'];
-    //przesuń plik z lokalizacji tymczasowej do docelowej
-    move_uploaded_file($_FILES['file']['tmp_name'], $targetDirectory.$fileName);
-
-    //dopisz posta do bazy
-    //tymczasowo - autorID
-    
+    Post::CreatePost($_POST['postTitle'], $_POST['postDescription']);
 }
 ?>
 
