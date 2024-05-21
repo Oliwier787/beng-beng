@@ -32,7 +32,7 @@ class Post {
 
     static function GetPosts() : array {
         // Connect to the database
-        $db = new mysqli('localhost', 'root', '', 'cms');
+        $db = new mysqli('localhost', 'root', '', 'reddit');
     
         // Prepare the SQL query
         $sql = "SELECT post.ID, post.title, post.timestamp, post.imgUrl, user.email AS author 
@@ -84,7 +84,7 @@ class Post {
         $gdImage = imagecreatefromstring($fileString);
 
         //przygotuj pełny url pliku
-        $finalUrl = "http://localhost/cms/img/".$fileName.".webp";
+        $finalUrl = "http://localhost/beng-beng/Img/".$fileName.".webp";
         //imagewebp nie umie z http - link wewnętrzny
         $internalUrl = "img/".$fileName.".webp";
 
@@ -96,7 +96,7 @@ class Post {
         $authorID = $_SESSION['user']->getID();
 
 
-        $db = new mysqli('localhost', 'root', '', 'cms');
+        $db = new mysqli('localhost', 'root', '', 'beng-beng');
         $q = $db->prepare("INSERT INTO post (authorID, imgUrl, title) VALUES (?, ?, ?)");
         //pierwszy atrybut jest liczba, dwa pozostale tekstem wiec integer string string
         $q->bind_param("iss", $authorID, $finalUrl, $title);

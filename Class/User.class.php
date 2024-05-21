@@ -11,20 +11,25 @@ class User {
         $this->id = $id;
         $this->email = $email;
     }
+    public function getID() : int {
+        return $this->id;
+    }
+    public function getEmail() : string {
+        return $this->email;
+    }
     public static function Register(string $email, string $password) {
         //funkcja rejestruje nowego użytkownika do bazy danych
-        $db = new mysqli('local','root', '', 'cms' );
-        $sql = "INSERT INTO user (email,password) VALUES (?, ?)";
+        $db = new mysqli('localhost','root', '', 'reddit' );
+        $sql = "INSERT INTO User (email, passwordHash) VALUES (?, ?)";
         $q = $db->prepare($sql);
         $passwordHash = password_hash($password, PASSWORD_ARGON2I);
-        $q->bind_param("ss", $email,$passwordHash);
-        $q->execute();
-
-
+        $q->bind_param("ss", $email, $passwordHash);
+        $result = $q->execute();
+        return $result;
     }
-    public static function Login(string $email, string $password) {
+    public static function Login(string $email, string $password) : bool {
         //funkcja loguje istniejącego użytkownika do bazy danych
-        $db = new mysqli('localhost','root', '', 'cms');
+        $db = new mysqli('localhost','root', '', 'reddit');
         $sql = "SELECT * FROM user WHERE email = ? LIMIT 1";
         $q = $db->prepare($sql);
         $q->bind_param("s", $email);
@@ -32,11 +37,14 @@ class User {
         $result = $q->get_result();
         $row = $result->fetch_assoc();
         //tu muszą się nazwy w nawiasach [] zgadzać z nazwą kolumny w bazie danych
-        $id = $row['id'];
+        $id = $row['ID'];
         $passwordHash = $row['password'];
         if(password_verify($password, $passwordHash)) {
            //hasło się zgadza
            //zapisz dane użytkownika do sesji
+           $user = new User($id, $email);
+           $_SESSION['user'] = $user;
+           return true;
         } else {
            //hasło się nie zgadza
            return false;
@@ -55,7 +63,7 @@ class User {
     public function ChangePassword(string $oldPassword, string $newPassword) : bool  {
         //ta funkcja ma zaktualizować hasło użytkownika w bazie danych
         //wyciągnij hash hasła z bazy danych
-        $db = new mysqli("localhost", "root", "", "cms");
+        $db = new mysqli("localhost", "root", "", "reddit");
         $sql = "SELECT password FROM USER WHERE user.ID = ?";
         $q = $db->prepare($sql);
         $q->bind_param("i", $this->id);
